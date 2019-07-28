@@ -2,7 +2,7 @@ package btviewer;
 
 public class Tree {
 
-    private static final int MAX_LEVEL = 6;
+    public static final int MAX_LEVEL = 6;
 
     private Node root;
 
@@ -45,6 +45,10 @@ public class Tree {
                 continue;
             }
         }
+    }
+
+    public boolean isEmptyTree() {
+        return root == null;
     }
 
 }

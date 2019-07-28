@@ -14,31 +14,66 @@ public class BTPanel extends JPanel {
 
     private static final int NODE_RADIUS = 15;
 
-    private static final Color NODE_BACKGROUND_COLOR = new Color(150, 150, 150);
-    private static final Color NODE_TEXT_COLOR = new Color(20, 20, 20);
+    private static final Color NODE_BACKGROUND_COLOR = new Color(60, 80, 255);
+    private static final Color NODE_TEXT_COLOR = new Color(255, 255, 255);
+    private static final Color LINE_COLOR = new Color(25, 150, 255);
     private static final Font NODE_TEXT_FONT = new Font(null, Font.BOLD, 16);
 
+    private Tree tree;
+    private Graphics2D g2d;
 
     public BTPanel() {
         setLayout(null);
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        tree = null;
+        g2d = null;
+    }
+
+    public void showTree(Tree tree) {
+        this.tree = tree;
+        repaint();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+        g2d = (Graphics2D) g;
 
-        System.out.println(getWidth() + " x " + getHeight());
+        //Если список отсутствует или пуст - рисовать нечего. Просто выходим из метода
+        if (tree == null || tree.isEmptyTree()) return;
 
-        Node node1 = new Node(99);
-        Node node2 = new Node(5);
+        //Определяем координаты корневого узла
+        int x = getWidth() / 2;
+        int y = (getHeight() / Tree.MAX_LEVEL) / 2;
 
-        paintNode(g2d, node1, 100, 100);
-        paintNode(g2d, node2, 300, 200);
+        recursivePaint(tree.getRoot(), x, y, 1);
     }
 
-    private void paintNode(Graphics2D g2d, Node node, int x, int y) {
+    private void recursivePaint(Node node, int x, int y, int level) {
+        //Объявляем вспомогательные переменные
+        int xChild, yChild;
+
+        //Если у него есть левый потомок - определяем его координаты и рисуем линию до него
+        if (node.getLeft() != null) {
+            yChild = y + (getHeight() / Tree.MAX_LEVEL);
+            xChild = (int) (x - (getWidth() / (Math.pow(2, level))) / 2);
+            paintLine(x, y, xChild, yChild);
+            recursivePaint(node.getLeft(), xChild, yChild, level + 1);
+        }
+
+        //Если у него есть правый потомок - определяем его координаты и рисуем линию до него
+        if (node.getRight() != null) {
+            yChild = y + (getHeight() / Tree.MAX_LEVEL);
+            xChild = (int) (x + (getWidth() / (Math.pow(2, level))) / 2);
+            paintLine(x, y, xChild, yChild);
+            recursivePaint(node.getRight(), xChild, yChild, level + 1);
+        }
+
+        //Рисуем текущий узел
+        paintNode(node, x, y);
+    }
+
+    private void paintNode(Node node, int x, int y) {
         String content = node.getContent() + "";
 
         int xCenterOval = x - NODE_RADIUS;
@@ -60,10 +95,16 @@ public class BTPanel extends JPanel {
         g2d.setColor(NODE_BACKGROUND_COLOR);
         g2d.fillOval(xCenterOval, yCenterOval, 2 * NODE_RADIUS, 2 * NODE_RADIUS);
 
-        //Рисуем текст внутри товала
+        //Рисуем текст внутри овала
         g2d.setFont(NODE_TEXT_FONT);
         g2d.setColor(NODE_TEXT_COLOR);
         g2d.drawString(content, xTextPos, yTextPos);
+    }
+
+    private void paintLine(int x1, int y1, int x2, int y2) {
+        g2d.setColor(LINE_COLOR);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawLine(x1, y1, x2, y2);
     }
 
 }

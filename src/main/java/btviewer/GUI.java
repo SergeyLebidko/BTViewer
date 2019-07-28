@@ -2,6 +2,8 @@ package btviewer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GUI {
 
@@ -10,6 +12,9 @@ public class GUI {
 
     private JFrame frm;
     private BTPanel btPanel;
+    private TreeGenerator treeGenerator;
+
+    private JButton showRandomTreeBtn;
 
     public GUI() {
         frm = new JFrame("BTViewer");
@@ -23,10 +28,25 @@ public class GUI {
         JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        btPanel = new BTPanel();
-        contentPane.add(btPanel, BorderLayout.CENTER);
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        showRandomTreeBtn = new JButton("Случайное дерево");
+        controlPanel.add(showRandomTreeBtn);
 
+        btPanel = new BTPanel();
+
+        contentPane.add(controlPanel, BorderLayout.NORTH);
+        contentPane.add(btPanel, BorderLayout.CENTER);
         frm.setContentPane(contentPane);
+
+        treeGenerator = new TreeGenerator();
+
+        showRandomTreeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btPanel.showTree(treeGenerator.getRandomTree());
+            }
+        });
     }
 
     public void showGui() {
