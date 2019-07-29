@@ -44,7 +44,7 @@ public class TreeGenerator {
         //В цикле выбираем случайные элементы из случайных диапазонов и добавляем их в дерево
         int countAdded = 0;             //Количество добавленных в дерево вершин
         Range selectedRange;            //Диапазон, из которого будем выбирать число для добавления в дерево
-        int content;                    //Выбранное число
+        int value;                      //Выбранное число
         Range leftRange, rightRange;    //Поддиапазоны для левого и правого потомков
 
         //Если нужно сгенерировать полное дерево, то количество вершин должно быть равно максимальному для дерева данной глубины
@@ -57,15 +57,15 @@ public class TreeGenerator {
             //Выбор диапазона для создания полного дерева также не нужно делать случайным
             if (isFullTree) {
                 selectedRange = rangeList.peekLast();
-                content = (selectedRange.a + selectedRange.b) / 2;
+                value = (selectedRange.a + selectedRange.b) / 2;
             } else {
                 selectedRange = rangeList.get(rnd.nextInt(rangeList.size()));
-                content = selectedRange.a + rnd.nextInt(getRangeSize(selectedRange));
+                value = selectedRange.a + rnd.nextInt(getRangeSize(selectedRange));
             }
 
             //Вносим выбранное значение в дерево
             try {
-                tree.addContentToTree(content);
+                tree.addValueToTree(value);
             } catch (OutOfLevelException | DublicateContentException e) {
                 e.printStackTrace();
             }
@@ -75,8 +75,8 @@ public class TreeGenerator {
             rangeList.remove(selectedRange);
 
             //Формируем новые диапазоны для левого и правого потомков
-            leftRange = new Range(selectedRange.a, content - 1, selectedRange.level + 1);
-            rightRange = new Range(content + 1, selectedRange.b, selectedRange.level + 1);
+            leftRange = new Range(selectedRange.a, value - 1, selectedRange.level + 1);
+            rightRange = new Range(value + 1, selectedRange.b, selectedRange.level + 1);
 
             //Если диапазоны корректны - добавляем их в список
             if (isCorrectRange(leftRange)) rangeList.add(leftRange);

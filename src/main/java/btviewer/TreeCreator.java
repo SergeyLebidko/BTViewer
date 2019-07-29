@@ -56,7 +56,7 @@ public class TreeCreator {
             JButton button = (JButton) e.getSource();
             int value = Integer.parseInt(button.getActionCommand());
             try {
-                tree.addContentToTree(value);
+                tree.addValueToTree(value);
                 btPanel.showTree(tree);
             } catch (OutOfLevelException e1) {
                 JOptionPane.showMessageDialog(dialog, "<html>Эначение " + value + " нельзя добавить в дерево.<br>Будет превышема максимально допустимая глубина");

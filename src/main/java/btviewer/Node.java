@@ -2,16 +2,16 @@ package btviewer;
 
 public class Node {
 
-    private int content;
+    private int value;
     private Node left;
     private Node right;
 
-    public Node(int content) {
-        this.content = content;
+    public Node(int value) {
+        this.value = value;
     }
 
-    public int getContent() {
-        return content;
+    public int getValue() {
+        return value;
     }
 
     public Node getLeft() {

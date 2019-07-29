@@ -2,6 +2,7 @@ package btviewer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,6 +21,8 @@ public class GUI {
     private JButton showRandomTreeBtn;
     private JButton showFullTreeBtn;
     private JButton showCreatorDialogBtn;
+
+    private JButton searchValueBtn;
 
     public GUI() {
         frm = new JFrame("BTViewer");
@@ -41,6 +44,10 @@ public class GUI {
         controlPanel.add(showFullTreeBtn);
         showCreatorDialogBtn = new JButton("Создать дерево вручную");
         controlPanel.add(showCreatorDialogBtn);
+
+        controlPanel.add(Box.createHorizontalStrut(10));
+        searchValueBtn = new JButton("Найти значение");
+        controlPanel.add(searchValueBtn);
 
         btPanel = new BTPanel();
 
@@ -73,6 +80,38 @@ public class GUI {
                 currentTree = new Tree();
                 btPanel.showTree(currentTree);
                 treeCreator.showCreatorDialog(currentTree);
+            }
+        });
+
+        searchValueBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //Получаем значение от пользователя
+                int value;
+                while (true) {
+                    String str = JOptionPane.showInputDialog(frm, "Введите целое число:", "", JOptionPane.QUESTION_MESSAGE);
+                    if (str == null) return;
+                    str = str.trim();
+                    try {
+                        value = Integer.parseInt(str);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frm, "Введите корректное значение", "", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    }
+                    break;
+                }
+
+                //Ищем полученное значение в дереве
+                List<Node> pathToValue;
+                try {
+                    pathToValue = currentTree.searchPathToValue(value);
+                } catch (CannotFindValueException e1) {
+                    JOptionPane.showMessageDialog(frm, "Введенного значения нет в дереве", "", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                //Отображаем путь к узлу
+                btPanel.showTreeWithPath(currentTree, pathToValue);
             }
         });
     }
