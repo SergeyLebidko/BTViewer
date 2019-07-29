@@ -2,6 +2,8 @@ package btviewer;
 
 public class Tree {
 
+    public static final int MIN_RANGE_VALUE = 0;
+    public static final int MAX_RANGE_VALUE = 99;
     public static final int MAX_LEVEL = 6;
 
     private Node root;
@@ -14,7 +16,7 @@ public class Tree {
         return root;
     }
 
-    public void addContentToTree(int content) throws OutOfLevelException {
+    public void addContentToTree(int content) throws OutOfLevelException, DublicateContentException {
         //Если дерево еще пустое, то просто создаем его корневой узел
         if (root == null) {
             root = new Node(content);
@@ -43,6 +45,9 @@ public class Tree {
                 current = current.getRight();
                 level++;
                 continue;
+            }
+            if (content == current.getContent()){
+                throw new DublicateContentException();
             }
         }
     }
