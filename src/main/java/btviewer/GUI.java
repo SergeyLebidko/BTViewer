@@ -23,6 +23,7 @@ public class GUI {
     private JButton showCreatorDialogBtn;
 
     private JButton searchValueBtn;
+    private JButton removeNodeBtn;
 
     public GUI() {
         frm = new JFrame("BTViewer");
@@ -48,6 +49,8 @@ public class GUI {
         controlPanel.add(Box.createHorizontalStrut(10));
         searchValueBtn = new JButton("Найти значение");
         controlPanel.add(searchValueBtn);
+        removeNodeBtn = new JButton("Удалить узел");
+        controlPanel.add(removeNodeBtn);
 
         btPanel = new BTPanel();
 
@@ -86,32 +89,45 @@ public class GUI {
         searchValueBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (currentTree == null || currentTree.isEmptyTree()) return;
+
                 //Получаем значение от пользователя
-                int value;
-                while (true) {
-                    String str = JOptionPane.showInputDialog(frm, "Введите целое число:", "", JOptionPane.QUESTION_MESSAGE);
-                    if (str == null) return;
-                    str = str.trim();
-                    try {
-                        value = Integer.parseInt(str);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(frm, "Введите корректное значение", "", JOptionPane.ERROR_MESSAGE);
-                        continue;
-                    }
-                    break;
-                }
+                Integer value = getNodeValue();
+                if (value == null) return;
 
                 //Ищем полученное значение в дереве
                 List<Node> pathToValue;
                 try {
                     pathToValue = currentTree.searchPathToValue(value);
-                } catch (CannotFindValueException e1) {
+                } catch (CannotFindValueException ex) {
                     JOptionPane.showMessageDialog(frm, "Введенного значения нет в дереве", "", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 //Отображаем путь к узлу
                 btPanel.showTreeWithPath(currentTree, pathToValue);
+            }
+        });
+
+        removeNodeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentTree == null || currentTree.isEmptyTree()) return;
+
+                //Получаем значение от пользователя
+                Integer value = getNodeValue();
+                if (value == null) return;
+
+                //Удаляем узел
+                try {
+                    currentTree.removeNode(value);
+                } catch (CannotFindValueException ex) {
+                    JOptionPane.showMessageDialog(frm, "Введенного значения нет в дереве", "", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                //Отображаем измененное дерево
+                btPanel.showTree(currentTree);
             }
         });
     }
@@ -122,6 +138,23 @@ public class GUI {
                 frm.setVisible(true);
             }
         });
+    }
+
+    private Integer getNodeValue() {
+        int value;
+        while (true) {
+            String str = JOptionPane.showInputDialog(frm, "Введите целое число:", "", JOptionPane.QUESTION_MESSAGE);
+            if (str == null) return null;
+            str = str.trim();
+            try {
+                value = Integer.parseInt(str);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frm, "Введите корректное значение", "", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            break;
+        }
+        return value;
     }
 
 }

@@ -82,6 +82,127 @@ public class Tree {
         return pathToValue;
     }
 
+    public void removeNode(int value) throws CannotFindValueException {
+        //Ищем узел, который будем удалять
+        Node current = root;
+        Node parent = null;
+
+        while (true) {
+            if (current == null) throw new CannotFindValueException();
+
+            //Если узел найден - выходим из цикла
+            if (current.getValue() == value) {
+                break;
+            }
+
+            //Если узел не найден - продолжаем поиски в узлах-потомках
+            if (value < current.getValue()) {
+                parent = current;
+                current = current.getLeft();
+            }
+            if (value > current.getValue()) {
+                parent = current;
+                current = current.getRight();
+            }
+        }
+
+        //Первый случай - удаляемый узел не имеет потомков
+        if (current.isNotChildren()) {
+            if (parent.getLeft() == current) {
+                parent.setLeft(null);
+                return;
+            }
+            if (parent.getRight() == current) {
+                parent.setRight(null);
+                return;
+            }
+        }
+
+        //Второй случай - удаляемый узел имеет одного потомка
+        if (current.isOnlyLeftChild() | current.isOnlyRightChild()) {
+            if (parent.getLeft() == current) {
+                if (current.isOnlyLeftChild()) {
+                    parent.setLeft(current.getLeft());
+                    return;
+                }
+                if (current.isOnlyRightChild()) {
+                    parent.setLeft(current.getRight());
+                    return;
+                }
+            }
+            if (parent.getRight() == current) {
+                if (current.isOnlyLeftChild()) {
+                    parent.setRight(current.getLeft());
+                    return;
+                }
+                if (current.isOnlyRightChild()) {
+                    parent.setRight(current.getRight());
+                    return;
+                }
+            }
+        }
+
+        //Третий случай - удаляемый узел имеет двух потомков
+        if (current.isBothChild()) {
+            Node successor = current.getRight();
+            Node parentSuccessor = current;
+
+            while (true) {
+                //Пытаемся сдвинуться влево. Делаем это до тех пор, пока возможно
+                if (successor.getLeft() != null) {
+                    parentSuccessor = successor;
+                    successor = successor.getLeft();
+                    continue;
+                }
+                break;
+            }
+
+            //Первый частный случай - преемник является правым узлом удаляемого узла (лувых узлов он при этом иметь не будет)
+            if (successor == current.getRight()) {
+                successor.setLeft(current.getLeft());
+                if (parent.getRight() == current) {
+                    parent.setRight(successor);
+                    return;
+                }
+                if (parent.getLeft() == current) {
+                    parent.setLeft(successor);
+                    return;
+                }
+            }
+
+            //Второй частный случай - преемник является листовым узлом
+            if (successor.isNotChildren()) {
+                successor.setLeft(current.getLeft());
+                successor.setRight(current.getRight());
+                parentSuccessor.setLeft(null);
+                if (parent.getRight() == current) {
+                    parent.setRight(successor);
+                    return;
+                }
+                if (parent.getLeft() == current) {
+                    parent.setLeft(successor);
+                    return;
+                }
+            }
+
+            //Третий частный случай - преемник имеет потомков справа (потомков слева он иметь не может, иначе он не был бы преемником)
+            if (successor.isOnlyRightChild()) {
+                successor.setLeft(current.getLeft());
+                parentSuccessor.setLeft(successor.getRight());
+                successor.setRight(current.getRight());
+                if (parent.getRight() == current) {
+                    parent.setRight(successor);
+                    return;
+                }
+                if (parent.getLeft() == current) {
+                    parent.setLeft(successor);
+                    return;
+                }
+            }
+        }
+
+    }
+
     public boolean isEmptyTree() {
         return root == null;
     }
