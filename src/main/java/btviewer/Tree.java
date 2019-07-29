@@ -99,15 +99,21 @@ public class Tree {
             if (value < current.getValue()) {
                 parent = current;
                 current = current.getLeft();
+                continue;
             }
             if (value > current.getValue()) {
                 parent = current;
                 current = current.getRight();
+                continue;
             }
         }
 
         //Первый случай - удаляемый узел не имеет потомков
         if (current.isNotChildren()) {
+            if (parent == null) {
+                root = null;
+                return;
+            }
             if (parent.getLeft() == current) {
                 parent.setLeft(null);
                 return;
