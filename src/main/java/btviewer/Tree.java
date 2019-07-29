@@ -126,6 +126,16 @@ public class Tree {
 
         //Второй случай - удаляемый узел имеет одного потомка
         if (current.isOnlyLeftChild() | current.isOnlyRightChild()) {
+            if (parent == null) {
+                if (current.isOnlyLeftChild()) {
+                    root = current.getLeft();
+                    return;
+                }
+                if (current.isOnlyRightChild()) {
+                    root = current.getRight();
+                    return;
+                }
+            }
             if (parent.getLeft() == current) {
                 if (current.isOnlyLeftChild()) {
                     parent.setLeft(current.getLeft());
@@ -166,6 +176,10 @@ public class Tree {
             //Первый частный случай - преемник является правым узлом удаляемого узла (лувых узлов он при этом иметь не будет)
             if (successor == current.getRight()) {
                 successor.setLeft(current.getLeft());
+                if (parent == null) {
+                    root = successor;
+                    return;
+                }
                 if (parent.getRight() == current) {
                     parent.setRight(successor);
                     return;
@@ -181,6 +195,10 @@ public class Tree {
                 successor.setLeft(current.getLeft());
                 successor.setRight(current.getRight());
                 parentSuccessor.setLeft(null);
+                if (parent == null) {
+                    root = successor;
+                    return;
+                }
                 if (parent.getRight() == current) {
                     parent.setRight(successor);
                     return;
@@ -196,6 +214,10 @@ public class Tree {
                 successor.setLeft(current.getLeft());
                 parentSuccessor.setLeft(successor.getRight());
                 successor.setRight(current.getRight());
+                if (parent == null) {
+                    root = successor;
+                    return;
+                }
                 if (parent.getRight() == current) {
                     parent.setRight(successor);
                     return;
