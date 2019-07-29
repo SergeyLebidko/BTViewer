@@ -13,10 +13,13 @@ public class GUI {
     private JFrame frm;
     private BTPanel btPanel;
     private Tree currentTree;
+
     private TreeGenerator treeGenerator;
+    private TreeCreator treeCreator;
 
     private JButton showRandomTreeBtn;
     private JButton showFullTreeBtn;
+    private JButton showCreatorDialogBtn;
 
     public GUI() {
         frm = new JFrame("BTViewer");
@@ -36,6 +39,8 @@ public class GUI {
         controlPanel.add(showRandomTreeBtn);
         showFullTreeBtn = new JButton("Полное дерево");
         controlPanel.add(showFullTreeBtn);
+        showCreatorDialogBtn = new JButton("Создать дерево вручную");
+        controlPanel.add(showCreatorDialogBtn);
 
         btPanel = new BTPanel();
 
@@ -44,6 +49,7 @@ public class GUI {
         frm.setContentPane(contentPane);
 
         treeGenerator = new TreeGenerator();
+        treeCreator = new TreeCreator(frm, btPanel);
 
         showRandomTreeBtn.addActionListener(new ActionListener() {
             @Override
@@ -58,6 +64,15 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 currentTree = treeGenerator.getFulleTree();
                 btPanel.showTree(currentTree);
+            }
+        });
+
+        showCreatorDialogBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentTree = new Tree();
+                btPanel.showTree(currentTree);
+                treeCreator.showCreatorDialog(currentTree);
             }
         });
     }
